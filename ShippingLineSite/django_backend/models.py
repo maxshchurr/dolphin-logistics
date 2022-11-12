@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
@@ -77,9 +76,29 @@ class Order(models.Model):
     cargo_net_weight = models.IntegerField(verbose_name="Cargo's weight",
                                            validators=[MinValueValidator(1), MaxValueValidator(28000)])
     cargo_type = models.CharField(verbose_name='Type of cargo', choices=types_of_cargo, max_length=100)
-    price = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', default=1)
+    cargo = models.CharField(verbose_name='Cargo description', max_length=100)
+    quantity_of_containers = models.IntegerField(verbose_name='Quantity of containers', validators=[MinValueValidator(1)])
+    expected_date_of_freight = models.DateField(verbose_name='Expected date of freight')
     client = models.ForeignKey(Client, verbose_name='Client', on_delete=models.RESTRICT)
-    manager = models.ForeignKey(SalesManager, verbose_name='Sales Manager', on_delete=models.RESTRICT)
 
     def __str__(self):
         return f'{self.departure_location} {self.delivery_location}'
+
+
+class Quotation(models.Model):
+    class Meta:
+        db_table = "quotations"
+        verbose_name = 'Quotation'
+        verbose_name_plural = 'Quotations'
+
+        freight_price = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', default=1)
+        congestion_at_load_price = MoneyField(max_digits=6, decimal_places=2, default_currency='USD', default=1)
+        new_bunker_factor_price = MoneyField(max_digits=6, decimal_places=2, default_currency='USD', default=1)
+        term_handling_origin_price = MoneyField(max_digits=6, decimal_places=2, default_currency='USD', default=1)
+        # Must be added automatically with a date binding(approximately + 1 month to order's expected date of freight)
+        # validity_date = models.DateField()
+
+        manager = models.ForeignKey(SalesManager, verbose_name='Sales Manager', on_delete=models.RESTRICT)
+
+        def __str__(self):
+            return f'{self.manager}'
