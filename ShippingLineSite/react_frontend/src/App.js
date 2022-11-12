@@ -1,23 +1,32 @@
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Header from './components/Header';
+import PrivateRoutes from './utils/PrivateRoutes';
+
 
 function App() {
   return (
     <div className="App">
 
-    <Router>
+    <BrowserRouter>
       <Header />
       <Routes>
+
+        <Route element={<PrivateRoutes/> }>
+          <Route element={<HomePage/>} path='/'/>
+        </Route>
+
+        <Route path="/login" element={<LoginPage />} />
         
-        <Route path='/' element={<LoginPage />}></Route> 
-        <Route path='/homepage' element={ <HomePage />}></Route>
       </Routes>
-    </Router>
+    </BrowserRouter>
     </div>
   );
 }
+
+
+
 
 export default App;
