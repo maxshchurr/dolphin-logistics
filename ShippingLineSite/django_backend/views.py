@@ -1,7 +1,11 @@
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import OrderSerializer
+from .models import Order
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -17,6 +21,23 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+
+class ListOrders(APIView):
+
+    def get(self, request):
+        if request.method == 'GET':
+            orders = Order.objects.all()
+            serializer = OrderSerializer(orders, many=True)
+            return Response(serializer.data)
+
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Probably will need in future

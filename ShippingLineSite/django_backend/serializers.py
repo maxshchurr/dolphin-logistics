@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.authtoken.views import Token
-from .models import Order, Company
+from .models import Order, Company, SalesManager
 from django.contrib.auth.models import User
 
 
@@ -31,4 +31,10 @@ class OrderSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
+        fields = '__all__'
+
+
+class SalesManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesManager
         fields = '__all__'
